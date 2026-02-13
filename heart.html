@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тайное послание для тебя 💌</title>
+    <style>
+        /* Сброс стилей и базовые настройки */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Прячем стандартный курсор */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #1a1a2e; /* Запасной цвет */
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Секретное сообщение (видно только в лупу) */
+        .secret-message {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(145deg, #ff9a9e 0%, #fad0c4 50%, #ffdde1 100%);
+            color: #2c3e50;
+            text-align: center;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .secret-message h1 {
+            font-size: clamp(2rem, 8vw, 4rem);
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .secret-message p {
+            font-size: clamp(1rem, 4vw, 1.8rem);
+            max-width: 800px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-style: italic;
+            background: rgba(255,255,255,0.2);
+            padding: 20px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .secret-photo {
+            width: min(300px, 80%);
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+            border: 4px solid white;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .secret-photo:hover {
+            transform: scale(1.02);
+        }
+
+        /* Маска (серый шум) */
+        .mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            /* Текстура шума */
+            background: repeating-radial-gradient(circle at 30% 40%, 
+                #2a2a2a 0px, 
+                #2a2a2a 2px, 
+                #3a3a3a 2px, 
+                #3a3a3a 4px);
+            background-size: 8px 8px;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+
+            /* Прозрачный круг, который двигается за мышкой */
+            -webkit-mask-image: radial-gradient(circle 120px at var(--x, -1000px) var(--y, -1000px), transparent 95%, black 100%);
+            mask-image: radial-gradient(circle 120px at var(--x, -1000px) var(--y, -1000px), transparent 95%, black 100%);
+            
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+        }
+
+        /* Лупа */
+        .magnifier {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Внешнее свечение */
+            filter: drop-shadow(0 0 20px rgba(255, 182, 193, 0.6));
+        }
+
+        /* Стекло лупы */
+        .magnifier::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 240, 245, 0.15);
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 0 40px rgba(255, 192, 203, 0.4),
+                inset 0 0 40px rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 192, 203, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(255, 105, 180, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.5); }
+        }
+
+        /* Блик на стекле */
+        .magnifier::after {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(255, 255, 255, 0.4) 50%, 
+                transparent 80%);
+            top: 25px;
+            left: 35px;
+            z-index: 11;
+        }
+
+        /* Ручка лупы */
+        .magnifier-handle {
+            position: absolute;
+            width: 100px;
+            height: 20px;
+            background: linear-gradient(135deg, #d4af37, #996633, #d4af37);
+            border-radius: 20px;
+            bottom: -30px;
+            right: -30px;
+            transform: rotate(35deg);
+            
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border: 2px solid #ffd700;
+            z-index: 9;
+            
+            /* Блик на ручке */
+            &::after {
+                content: '';
+                position: absolute;
+                width: 30px;
+                height: 6px;
+                background: rgba(255,255,255,0.6);
+                border-radius: 10px;
+                top: 3px;
+                left: 10px;
+                transform: rotate(-15deg);
+            }
+        }
+
+        /* Украшения - летающие сердечки */
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 105, 180, 0.6);
+            font-size: 24px;
+            user-select: none;
+            pointer-events: none;
+            z-index: 5;
+            animation: floatHeart 4s linear infinite;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Подсказка */
+        .hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 60px;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            z-index: 20;
+            white-space: nowrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+            animation: bounce 2s infinite;
+            pointer-events: none;
+            font-weight: 500;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .hint.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .magnifier {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .magnifier::after {
+                width: 50px;
+                height: 50px;
+                top: 15px;
+                left: 20px;
+            }
+            
+            .hint {
+                font-size: 1rem;
+                padding: 12px 25px;
+                white-space: normal;
+                text-align: center;
+                width: 90%;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Секретное содержимое -->
+        <div class="secret-message">
+            <h1>💖 Только для тебя 💖</h1>
+            <p>
+                В этом мире есть множество тайн...<br>
+                Но самая главная тайна - это то как я тебя ценю.<br><br>
+                <strong>Ты - мой лучик солнца на этом свете.</strong><br>
+                С Днём Святого Валентина, Диан!
+            </p>
+            <!-- Красивое фото (замени на своё) -->
+            <img src="https://www.kapwing.com/videos/698f34504d02630875100b37" 
+                 alt="Наше романтическое фото" 
+                 class="secret-photo"
+                 onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22 viewBox=%220 0 200 200%22><rect width=%22200%22 height=%22200%22 fill=%22%23ffb6c1%22/><circle cx=%22100%22 cy=%2280%22 r=%2240%22 fill=%22%23ff69b4%22/><circle cx=%2275%22 cy=%2270%22 r=%225%22 fill=%22white%22/><circle cx=%22125%22 cy=%2270%22 r=%225%22 fill=%22white%22/><path d=%22M 70 110 Q 100 140, 130 110%22 stroke=%22%23c71585%22 stroke-width=%226%22 fill=%22none%22 stroke-linecap=%22round%22/><text x=%2240%22 y=%22180%22 fill=%22%23c71585%22 font-size=%2230%22>❤️</text></svg>'">
+        </div>
+
+        <!-- Маска с дырочкой -->
+        <div class="mask" id="mask"></div>
+
+        <!-- Лупа -->
+        <div class="magnifier" id="magnifier">
+            <div class="magnifier-handle"></div>
+        </div>
+
+        <!-- Подсказка -->
+        <div class="hint" id="hint">🔍 Води мышкой, чтобы увидеть секрет</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mask = document.getElementById('mask');
+            const magnifier = document.getElementById('magnifier');
+            const hint = document.getElementById('hint');
+            
+            // Создаем летающие сердечки
+            function createFloatingHeart() {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heart.style.opacity = Math.random() * 0.5 + 0.3;
+                document.body.appendChild(heart);
+                
+                // Удаляем сердечко после анимации
+                setTimeout(() => {
+                    heart.remove();
+                }, 5000);
+            }
+            
+            // Запускаем сердечки (каждые 300мс)
+            setInterval(createFloatingHeart, 300);
+            
+            // Обработчик движения мыши
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+                
+                // 1. Двигаем физическую лупу
+                magnifier.style.left = x + 'px';
+                magnifier.style.top = y + 'px';
+                
+                // 2. Двигаем "дырку" в маске
+                mask.style.setProperty('--x', x + 'px');
+                mask.style.setProperty('--y', y + 'px');
+                
+                // Скрываем подсказку при первом движении
+                if (hint && !hint.classList.contains('fade-out')) {
+                    hint.classList.add('fade-out');
+                }
+            });
+            
+            // Поддержка сенсорных экранов
+            document.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const x = touch.clientX;
+                const y = touch.clientY;
+                
+                magnifier.style.left = x + 'px';
+                magnifier.style.top = y + 'px';
+                mask.style.setProperty('--x', x + 'px');
+                mask.style.setProperty('--y', y + 'px');
+                
+                if (hint && !hint.classList.contains('fade-out')) {
+                    hint.classList.add('fade-out');
+                }
+            }, { passive: false });
+            
+            // Если мышь уходит за пределы окна
+            document.addEventListener('mouseleave', () => {
+                magnifier.style.opacity = '0.3';
+                // Прячем дырочку
+                mask.style.setProperty('--x', '-1000px');
+                mask.style.setProperty('--y', '-1000px');
+            });
+            
+            document.addEventListener('mouseenter', () => {
+                magnifier.style.opacity = '1';
+            });
+            
+            // Для мобильных устройств
+            document.addEventListener('touchend', () => {
+                mask.style.setProperty('--x', '-1000px');
+                mask.style.setProperty('--y', '-1000px');
+                magnifier.style.opacity = '0';
+            });
+            
+            document.addEventListener('touchstart', (e) => {
+                magnifier.style.opacity = '1';
+                const touch = e.touches[0];
+                if (touch) {
+                    mask.style.setProperty('--x', touch.clientX + 'px');
+                    mask.style.setProperty('--y', touch.clientY + 'px');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
