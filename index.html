@@ -316,100 +316,11 @@
         <div class="hint" id="hint">🔍 Води пальцем, а да похуй</div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mask = document.getElementById('mask');
-            const magnifier = document.getElementById('magnifier');
-            const hint = document.getElementById('hint');
-            
-            // Создаем летающие сердечки
-            function createFloatingHeart() {
-                const heart = document.createElement('div');
-                heart.className = 'floating-heart';
-                heart.innerHTML = '';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
-                heart.style.opacity = Math.random() * 0.5 + 0.3;
-                document.body.appendChild(heart);
-                
-                // Удаляем сердечко после анимации
-                setTimeout(() => {
-                    heart.remove();
-                }, 5000);
-            }
-            
-            // Запускаем сердечки (каждые 300мс)
-            setInterval(createFloatingHeart, 300);
-            
-            // Обработчик движения мыши
-            document.addEventListener('mousemove', (e) => {
-                const x = e.clientX;
-                const y = e.clientY;
-                
-                // 1. Двигаем физическую лупу
-                magnifier.style.left = x + 'px';
-                magnifier.style.top = y + 'px';
-                
-                // 2. Двигаем "дырку" в маске
-                mask.style.setProperty('--x', x + 'px');
-                mask.style.setProperty('--y', y + 'px');
-                
-                // Скрываем подсказку при первом движении
-                if (hint && !hint.classList.contains('fade-out')) {
-                    hint.classList.add('fade-out');
-                }
-            });
-            
-            // Поддержка сенсорных экранов
-            document.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const x = touch.clientX;
-                const y = touch.clientY;
-                
-                magnifier.style.left = x + 'px';
-                magnifier.style.top = y + 'px';
-                mask.style.setProperty('--x', x + 'px');
-                mask.style.setProperty('--y', y + 'px');
-                
-                if (hint && !hint.classList.contains('fade-out')) {
-                    hint.classList.add('fade-out');
-                }
-            }, { passive: false });
-            
-            // Если мышь уходит за пределы окна
-            document.addEventListener('mouseleave', () => {
-                magnifier.style.opacity = '0.3';
-                // Прячем дырочку
-                mask.style.setProperty('--x', '-1000px');
-                mask.style.setProperty('--y', '-1000px');
-            });
-            
-            document.addEventListener('mouseenter', () => {
-                magnifier.style.opacity = '1';
-            });
-            
-            // Для мобильных устройств
-            document.addEventListener('touchend', () => {
-                mask.style.setProperty('--x', '-1000px');
-                mask.style.setProperty('--y', '-1000px');
-                magnifier.style.opacity = '0';
-            });
-            
-            document.addEventListener('touchstart', (e) => {
-                magnifier.style.opacity = '1';
-                const touch = e.touches[0];
-                if (touch) {
-                    mask.style.setProperty('--x', touch.clientX + 'px');
-                    mask.style.setProperty('--y', touch.clientY + 'px');
-                }
-            });
-        });
-    </script>
+   
 </body>
 
 </html>
+
 
 
 
