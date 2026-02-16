@@ -89,139 +89,17 @@
         }
 
         /* Маска (серый шум) */
-        .mask {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            /* Текстура шума */
-            background: repeating-radial-gradient(circle at 30% 40%, 
-                #2a2a2a 0px, 
-                #2a2a2a 2px, 
-                #3a3a3a 2px, 
-                #3a3a3a 4px);
-            background-size: 8px 8px;
-            z-index: 2;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
-
-            /* Прозрачный круг, который двигается за мышкой */
-            -webkit-mask-image: radial-gradient(circle 120px at var(--x, -1000px) var(--y, -1000px), transparent 95%, black 100%);
-            mask-image: radial-gradient(circle 120px at var(--x, -1000px) var(--y, -1000px), transparent 95%, black 100%);
-            
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-        }
+       
 
         /* Лупа */
-        .magnifier {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            
-            /* Внешнее свечение */
-            filter: drop-shadow(0 0 20px rgba(255, 182, 193, 0.6));
-        }
+        
 
         /* Стекло лупы */
-        .magnifier::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: rgba(255, 240, 245, 0.15);
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 
-                0 0 40px rgba(255, 192, 203, 0.4),
-                inset 0 0 40px rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(4px);
-            animation: glow 2s ease-in-out infinite;
-        }
+       
 
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 40px rgba(255, 192, 203, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.3); }
-            50% { box-shadow: 0 0 60px rgba(255, 105, 180, 0.6), inset 0 0 60px rgba(255, 255, 255, 0.5); }
-        }
+       
 
-        /* Блик на стекле */
-        .magnifier::after {
-            content: '';
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, 
-                rgba(255, 255, 255, 0.95) 0%, 
-                rgba(255, 255, 255, 0.4) 50%, 
-                transparent 80%);
-            top: 25px;
-            left: 35px;
-            z-index: 11;
-        }
-
-        /* Ручка лупы */
-        .magnifier-handle {
-            position: absolute;
-            width: 100px;
-            height: 20px;
-            background: linear-gradient(135deg, #d4af37, #996633, #d4af37);
-            border-radius: 20px;
-            bottom: -30px;
-            right: -30px;
-            transform: rotate(35deg);
-            
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            border: 2px solid #ffd700;
-            z-index: 9;
-            
-            /* Блик на ручке */
-            &::after {
-                content: '';
-                position: absolute;
-                width: 30px;
-                height: 6px;
-                background: rgba(255,255,255,0.6);
-                border-radius: 10px;
-                top: 3px;
-                left: 10px;
-                transform: rotate(-15deg);
-            }
-        }
-
-        /* Украшения - летающие сердечки */
-        .floating-heart {
-            position: absolute;
-            color: rgba(255, 105, 180, 0.6);
-            font-size: 24px;
-            user-select: none;
-            pointer-events: none;
-            z-index: 5;
-            animation: floatHeart 4s linear infinite;
-        }
-
-        @keyframes floatHeart {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            20% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
+       
         /* Подсказка */
         .hint {
             position: absolute;
@@ -320,6 +198,7 @@
 </body>
 
 </html>
+
 
 
 
